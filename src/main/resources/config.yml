@@ -1,0 +1,29 @@
+
+crouch_disable: true
+
+require_tool: true
+tools:
+  - WOODEN_AXE
+  - STONE_AXE
+  - COPPER_AXE
+  - IRON_AXE
+  - GOLDEN_AXE
+  - DIAMOND_AXE
+  - NETHERITE_AXE
+
+tree:
+  oak:
+    logs:
+      - OAK_LOG
+    leaves:
+      - OAK_LEAF
+      - flowering_azalea_leaves
+      - azalea_leaves
+    diagonal_cardinal: false
+    true_diagonal: false
+    large_log: false
+    leaf_distance_x: 3
+    leaf_distance_y: 2
+    max_log_height: 6
+    min_logs: 4
+    min_leaves: 12

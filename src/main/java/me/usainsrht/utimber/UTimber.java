@@ -1,17 +1,52 @@
 package me.usainsrht.utimber;
 
+import me.usainsrht.utimber.listener.BreakListener;
+import me.usainsrht.utimber.model.Tree;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public final class UTimber extends JavaPlugin {
 
+    public static UTimber instance;
+    public Set<Tree> trees;
+
     @Override
     public void onEnable() {
-        // Plugin startup logic
+        instance = this;
 
+        trees = new HashSet<>();
+
+        saveDefaultConfig();
+        loadConfig();
+
+        getServer().getPluginManager().registerEvents(new BreakListener(), this);
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+
     }
+
+    public void reload() {
+        reloadConfig();
+    }
+
+    public void loadConfig() {
+        trees.clear();
+
+        if (getConfig().isConfigurationSection("tree")) {
+            ConfigurationSection treeSection = getConfig().getConfigurationSection("tree");
+            treeSection.getKeys(false).forEach(key -> {
+                Tree tree = new Tree(treeSection.getConfigurationSection(key));
+                trees.add(tree);
+            });
+
+        }
+
+    }
+
+
 }

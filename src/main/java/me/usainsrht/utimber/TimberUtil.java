@@ -2,6 +2,7 @@ package me.usainsrht.utimber;
 
 import me.usainsrht.utimber.model.Tree;
 import me.usainsrht.utimber.model.DetectedTree;
+import me.usainsrht.utimber.model.TreeDetector;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
@@ -9,7 +10,7 @@ import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 
-public class TreeDetector {
+public class TimberUtil {
 
     @Nullable
     public static Tree detectTree(Block baseBlock) {
@@ -21,26 +22,14 @@ public class TreeDetector {
 
     public static DetectedTree detectTree(Block baseBlock, Tree tree) {
 
-        Set<Block> visited = new HashSet<>();
-        Set<Block> logs = new HashSet<>();
-        Set<Block> leaves = new HashSet<>();
+        TreeDetector detector = new TreeDetector(baseBlock, tree);
 
-        new Object() {
-            void visit(Block block) {
-                if (visited.contains(block)) return;
-                visited.add(block);
-                if (isLog(block, tree)) {
-                    logs.add(block);
-                } else if (isLeaf(block, tree)) {
-                    leaves.add(block);
-                }
-            }
-        };
+        detector.start();
 
-        return new DetectedTree(logs, leaves, tree);
+        return detector.result();
     }
 
-    public void destroyTree(DetectedTree detectedTree) {
+    public static void destroyTree(DetectedTree detectedTree) {
         detectedTree.logs.forEach(block -> block.setType(Material.AIR));
         detectedTree.leaves.forEach(block -> block.setType(Material.AIR));
         detectedTree.logs.stream().findFirst().ifPresent(block -> {
@@ -60,6 +49,14 @@ public class TreeDetector {
         if (material == null || material.isAir()) return false;
 
         return UTimber.instance.getConfig().getStringList("tools").stream().anyMatch(tool -> tool.equalsIgnoreCase(material.name()));
+    }
+
+    public static int getYDiff(Block a, Block b) {
+        return Math.abs(a.getY() - b.getY());
+    }
+
+    public static int getXDiff(Block a, Block b) {
+        return Math.abs(a.getX() - b.getX());
     }
 
 }
