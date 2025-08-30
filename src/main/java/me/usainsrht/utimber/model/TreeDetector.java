@@ -1,6 +1,7 @@
 package me.usainsrht.utimber.model;
 
 import me.usainsrht.utimber.TimberUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
@@ -30,21 +31,29 @@ public class TreeDetector {
         this.tree = tree;
     }
 
-    Tree.Part visit(Block block) {
+    public Tree.Part visit(Block block) {
+        return visit(block, null);
+    }
+
+    public Tree.Part visit(Block block, Tree.Part addIf) {
         if (visited.contains(block)) return null;
-        visited.add(block);
         if (isLog(block, tree)) {
-            logs.add(block);
+            if (addIf == Tree.Part.LOG) {
+                visited.add(block);
+                logs.add(block);
+            }
             return Tree.Part.LOG;
         } else if (isLeaf(block, tree)) {
-            leaves.add(block);
+            if (addIf == Tree.Part.LEAF) {
+                visited.add(block);
+                leaves.add(block);
+            }
             return Tree.Part.LEAF;
         }
         return null;
     }
 
     public void start() {
-        visit(baseBlock);
         if (tree.largeLog) {
             // determine where the base log in 2x2 large log
             Tree.Part[] relativeBlocks = new Tree.Part[4];
@@ -74,46 +83,100 @@ public class TreeDetector {
                 otherLogsBlockFaces.add(BlockFace.EAST);
                 otherLogsBlockFaces.add(BlockFace.NORTH_EAST);
             } else {
+                Bukkit.broadcastMessage("Large log tree but not a 2x2 log base " + tree.name);
                 largeLogBaseFace = null;
             }
         }
-        checkLogs(baseBlock.getRelative(BlockFace.UP));
+        checkLogs(baseBlock);
     }
 
+    public static int[][] branchSearchOffsets = new int[][]{
+            {1,1,1}, {1,1,0}, {1,1,-1},
+            {0,1,1},          {0,1,-1},
+            {-1,1,1}, {-1,1,0}, {-1,1,-1},
+
+            {1,0,1}, {1,0,0}, {1,0,-1},
+            {0,0,1},          {0,0,-1},
+            {-1,0,1}, {-1,0,0}, {-1,0,-1},
+
+            /*{1,-1,1}, {1,-1,0}, {1,-1,-1},
+            {0,-1,1}, {0,-1,0}, {0,-1,-1},
+            {-1,-1,1}, {-1,-1,0}, {-1,-1,-1},*/
+    };
     public void checkLogs(Block block) {
         Block currentBlock = block;
 
-        while (visit(currentBlock) == Tree.Part.LOG) {;
-            if (tree.maxLogHeight > 0 && TimberUtil.getYDiff(currentBlock, baseBlock) >= tree.maxLogHeight) {
+        while (visit(currentBlock, Tree.Part.LOG) == Tree.Part.LOG) {;
+            if (TimberUtil.getYDiff(currentBlock, baseBlock) > tree.logDistanceY) {
+                break;
+            }
+
+            if (TimberUtil.getXDiff(currentBlock, baseBlock) > tree.logDistanceX) {
                 break;
             }
 
             if (largeLogBaseFace != null) {
                 for (BlockFace face : otherLogsBlockFaces) {
-                    visit(currentBlock.getRelative(face));
+                    visit(currentBlock.getRelative(face), Tree.Part.LOG);
                 }
+            }
+
+            if (tree.branches) {
+                for (int[] offsets : branchSearchOffsets) {
+                    visit(currentBlock.getRelative(offsets[0], offsets[1], offsets[2]), Tree.Part.LOG);
+                }
+            }
+
+            if (tree.separateLeaves) {
+                checkLeaves(currentBlock, currentBlock.getRelative(BlockFace.NORTH));
+                checkLeaves(currentBlock, currentBlock.getRelative(BlockFace.EAST));
+                checkLeaves(currentBlock, currentBlock.getRelative(BlockFace.SOUTH));
+                checkLeaves(currentBlock, currentBlock.getRelative(BlockFace.WEST));
             }
 
             currentBlock = currentBlock.getRelative(BlockFace.UP);
         }
 
-        checkLeaves(block);
+        if (currentBlock != block) {
+
+            checkLeaves(currentBlock.getRelative(BlockFace.DOWN), currentBlock);
+
+        }
     }
 
-    public void checkLeaves(Block block) {
-        BlockFace[] faces = new BlockFace[]{
-                BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN
-        };
-        for (BlockFace blockFace : faces) {
-            Block relative = block.getRelative(blockFace);
-            if (visit(relative) == Tree.Part.LEAF) {
-                checkLeaves(relative);
+    public static int[][] leaveSearchOffsetsDiagonal = new int[][]{
+            {1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}, {0, 0, 1}, {0, 0, -1},
+            {1, 1, 1}, {1, 1, -1}, {1, -1, 1}, {1, -1, -1},
+            {-1, 1, 1}, {-1, 1, -1}, {-1, -1, 1}, {-1, -1, -1}
+    };
+    public static int[][] leaveSearchOffsetsCardinal = new int[][]{
+            {1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}, {0, 0, 1}, {0, 0, -1}
+    };
+    public void checkLeaves(Block log, Block leaf) {
+        for (int[] offsets : tree.diagonalLeaves ? leaveSearchOffsetsDiagonal : leaveSearchOffsetsCardinal) {
+            Block relative = leaf.getRelative(offsets[0], offsets[1], offsets[2]);
+            if (TimberUtil.getXDiff(relative, log) > tree.leafDistanceX) {
+                continue;
+            }
+            if (TimberUtil.getYDiff(relative, log) > tree.leafDistanceY) {
+                continue;
+            }
+            if (visit(relative, Tree.Part.LEAF) == Tree.Part.LEAF) {
+                checkLeaves(log, relative);
             }
         }
     }
 
     @Nullable
     public DetectedTree result() {
+        if (logs.size() < tree.minLogs) {
+            Bukkit.broadcastMessage("min logs not met: " + logs.size() + " < " + tree.minLogs + " " + tree.name);
+            return null;
+        }
+        if (leaves.size() < tree.minLeaves) {
+            Bukkit.broadcastMessage("min leaves not met: " + leaves.size() + " < " + tree.minLeaves + " " + tree.name);
+            return null;
+        }
         return detectedTree != null ? detectedTree : (detectedTree = new DetectedTree(logs, leaves, tree));
     }
 

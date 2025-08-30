@@ -34,6 +34,8 @@ public class BreakListener implements Listener {
 
         Block block = e.getBlock();
 
+        long start = System.currentTimeMillis();
+
         Tree tree = TimberUtil.detectTree(block);
         if (tree == null) return;
 
@@ -41,6 +43,8 @@ public class BreakListener implements Listener {
         if (detectedTree == null) return;
 
         TimberUtil.destroyTree(detectedTree);
+
+        player.sendMessage(detectedTree.tree.name + " logs: " + detectedTree.logs.size() + ", leaves: " + detectedTree.leaves.size() + " (" + (System.currentTimeMillis() - start) + "ms)");
 
         //check replant setting and block if applicable
 
