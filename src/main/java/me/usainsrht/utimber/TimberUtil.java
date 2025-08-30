@@ -8,6 +8,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
 import javax.annotation.Nullable;
+import java.util.Comparator;
 
 public class TimberUtil {
 
@@ -32,7 +33,7 @@ public class TimberUtil {
                     }
                     return true;
                 })
-                .findFirst()
+                .max(Comparator.comparing(t -> t.largeLog))
                 .orElse(null);
 
         return tree;
@@ -82,7 +83,10 @@ public class TimberUtil {
     }
 
     public static int getXDiff(Block a, Block b) {
-        return Math.abs(a.getX() - b.getX());
+        return Math.max(
+                Math.abs(a.getX() - b.getX()),
+                Math.abs(a.getZ() - b.getZ())
+        );
     }
 
 }

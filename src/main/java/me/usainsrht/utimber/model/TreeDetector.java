@@ -92,7 +92,7 @@ public class TreeDetector {
 
     public static int[][] branchSearchOffsets = new int[][]{
             {1,1,1}, {1,1,0}, {1,1,-1},
-            {0,1,1},          {0,1,-1},
+            {0,1,1}, {0,1,0}, {0,1,-1},
             {-1,1,1}, {-1,1,0}, {-1,1,-1},
 
             {1,0,1}, {1,0,0}, {1,0,-1},
@@ -104,44 +104,31 @@ public class TreeDetector {
             {-1,-1,1}, {-1,-1,0}, {-1,-1,-1},*/
     };
     public void checkLogs(Block block) {
-        Block currentBlock = block;
 
-        while (visit(currentBlock, Tree.Part.LOG) == Tree.Part.LOG) {;
-            if (TimberUtil.getYDiff(currentBlock, baseBlock) > tree.logDistanceY) {
-                break;
+        if (!checkLog(block)) {
+            if (block != baseBlock) {
+                checkLeaves(block, block);
             }
+            return;
+        }
 
-            if (TimberUtil.getXDiff(currentBlock, baseBlock) > tree.logDistanceX) {
-                break;
-            }
-
-            if (largeLogBaseFace != null) {
-                for (BlockFace face : otherLogsBlockFaces) {
-                    visit(currentBlock.getRelative(face), Tree.Part.LOG);
-                }
-            }
-
-            if (tree.branches) {
-                for (int[] offsets : branchSearchOffsets) {
-                    visit(currentBlock.getRelative(offsets[0], offsets[1], offsets[2]), Tree.Part.LOG);
-                }
-            }
-
+        for (int[] offsets : tree.logDistanceX > 0 ? branchSearchOffsets : new int[][]{{0,1,0}}) {
+            Block relative = block.getRelative(offsets[0], offsets[1], offsets[2]);
+            checkLogs(relative);
             if (tree.separateLeaves) {
-                checkLeaves(currentBlock, currentBlock.getRelative(BlockFace.NORTH));
-                checkLeaves(currentBlock, currentBlock.getRelative(BlockFace.EAST));
-                checkLeaves(currentBlock, currentBlock.getRelative(BlockFace.SOUTH));
-                checkLeaves(currentBlock, currentBlock.getRelative(BlockFace.WEST));
+                checkLeaves(block, relative);
             }
-
-            currentBlock = currentBlock.getRelative(BlockFace.UP);
         }
+    }
 
-        if (currentBlock != block) {
-
-            checkLeaves(currentBlock.getRelative(BlockFace.DOWN), currentBlock);
-
+    public boolean checkLog(Block block) {
+        if (TimberUtil.getXDiff(baseBlock, block) > tree.logDistanceX) {
+            return false;
         }
+        if (TimberUtil.getYDiff(baseBlock, block) > tree.logDistanceY) {
+            return false;
+        }
+        return visit(block, Tree.Part.LOG) == Tree.Part.LOG;
     }
 
     public static int[][] leaveSearchOffsetsDiagonal = new int[][]{

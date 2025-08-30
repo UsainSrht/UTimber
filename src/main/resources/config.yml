@@ -19,82 +19,124 @@ tree:
       - OAK_LEAVES
       - flowering_azalea_leaves
       - azalea_leaves
-    diagonal_cardinal: false
-    true_diagonal: false
+    log_distance_x: 0
+    log_distance_y: 6
     large_log: false
-    leaf_distance_x: 3
-    leaf_distance_y: 2
-    max_log_height: 6
+    leaf_distance_x: 2
+    leaf_distance_y: 4
     min_logs: 4
     min_leaves: 12
     separate_leaves: false
+    diagonal_leaves: false
   birch:
     logs:
       - BIRCH_LOG
     leaves:
       - BIRCH_LEAVES
-    diagonal_cardinal: false
-    true_diagonal: false
+    log_distance_x: 0
+    log_distance_y: 7
     large_log: false
-    leaf_distance_x: 3
+    leaf_distance_x: 2
     leaf_distance_y: 2
-    max_log_height: 6
     min_logs: 4
     min_leaves: 12
     separate_leaves: false
+    diagonal_leaves: false
   spruce:
     logs:
       - SPRUCE_LOG
     leaves:
       - SPRUCE_LEAVES
-    diagonal_cardinal: false
-    true_diagonal: false
+    log_distance_x: 0
+    log_distance_y: 8
     large_log: false
     leaf_distance_x: 3
     leaf_distance_y: 2
-    max_log_height: 8
     min_logs: 4
     min_leaves: 12
     separate_leaves: true
+    diagonal_leaves: false
   acacia:
     logs:
       - ACACIA_LOG
     leaves:
       - ACACIA_LEAVES
-    diagonal_cardinal: true
-    true_diagonal: false
+    log_distance_x: 4
+    log_distance_y: 9
     large_log: false
     leaf_distance_x: 3
     leaf_distance_y: 2
-    max_log_height: 6
     min_logs: 4
     min_leaves: 12
     separate_leaves: false
+    diagonal_leaves: false
   jungle:
     logs:
       - JUNGLE_LOG
     leaves:
       - JUNGLE_LEAVES
-    diagonal_cardinal: false
-    true_diagonal: false
+    log_distance_x: 0
+    log_distance_y: 10
     large_log: false
     leaf_distance_x: 3
-    leaf_distance_y: 2
-    max_log_height: 10
+    leaf_distance_y: 3
     min_logs: 4
     min_leaves: 12
     separate_leaves: false
+    diagonal_leaves: false
   dark_oak:
     logs:
       - DARK_OAK_LOG
     leaves:
       - DARK_OAK_LEAVES
-    diagonal_cardinal: false
-    true_diagonal: true
+    log_distance_x: 2
+    log_distance_y: 10
     large_log: true
     leaf_distance_x: 5
     leaf_distance_y: 2
-    max_log_height: 6
     min_logs: 4
     min_leaves: 12
     separate_leaves: false
+    diagonal_leaves: false
+  cherry:
+    logs:
+      - CHERRY_LOG
+    leaves:
+      - CHERRY_LEAVES
+    log_distance_x: 4
+    log_distance_y: 10
+    large_log: false
+    leaf_distance_x: 3
+    leaf_distance_y: 3
+    min_logs: 4
+    min_leaves: 12
+    separate_leaves: false
+    diagonal_leaves: false
+  pale_oak:
+    logs:
+      - PALE_OAK_LOG
+    leaves:
+      - PALE_OAK_LEAVES
+    log_distance_x: 0
+    log_distance_y: 10
+    large_log: false
+    leaf_distance_x: 3
+    leaf_distance_y: 3
+    min_logs: 4
+    min_leaves: 12
+    separate_leaves: false
+    diagonal_leaves: false
+  large_spruce:
+    logs:
+      - SPRUCE_LOG
+    leaves:
+      - SPRUCE_LEAVES
+    log_distance_x: 1
+    log_distance_y: 30
+    large_log: true
+    leaf_distance_x: 3
+    leaf_distance_y: 3
+    min_logs: 40
+    min_leaves: 9
+    separate_leaves: false
+    diagonal_leaves: true
