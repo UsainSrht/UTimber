@@ -4,7 +4,9 @@ import me.usainsrht.utimber.TimberUtil;
 import me.usainsrht.utimber.UTimber;
 import me.usainsrht.utimber.model.DetectedTree;
 import me.usainsrht.utimber.model.Tree;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -42,11 +44,18 @@ public class BreakListener implements Listener {
         DetectedTree detectedTree = TimberUtil.detectTree(block, tree);
         if (detectedTree == null) return;
 
-        TimberUtil.destroyTree(detectedTree);
+        TimberUtil.destroyTree(detectedTree, player.getInventory().getItemInMainHand(), player);
 
-        player.sendMessage(detectedTree.tree.name + " logs: " + detectedTree.logs.size() + ", leaves: " + detectedTree.leaves.size() + " (" + (System.currentTimeMillis() - start) + "ms)");
+        if (plugin.debug) player.sendMessage(detectedTree.tree.name + " logs: " + detectedTree.logs.size() + ", leaves: " + detectedTree.leaves.size() + " (" + (System.currentTimeMillis() - start) + "ms)");
 
         //check replant setting and block if applicable
+        if (plugin.getConfig().getBoolean("replant_sapling", true) && detectedTree.tree.sapling != null && !detectedTree.tree.sapling.equals(Material.AIR)) {
+            Block below = block.getRelative(BlockFace.DOWN);
+            if (plugin.getConfig().getStringList("replantable_blocks").stream().anyMatch(material -> below.getType().toString().equalsIgnoreCase(material))) {
+                e.getBlock().setType(detectedTree.tree.sapling);
+            }
+        }
+
 
     }
 

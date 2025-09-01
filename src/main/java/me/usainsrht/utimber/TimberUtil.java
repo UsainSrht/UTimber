@@ -3,12 +3,20 @@ package me.usainsrht.utimber;
 import me.usainsrht.utimber.model.DetectedTree;
 import me.usainsrht.utimber.model.Tree;
 import me.usainsrht.utimber.model.TreeDetector;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.Comparator;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class TimberUtil {
 
@@ -48,20 +56,53 @@ public class TimberUtil {
         return detector.result();
     }
 
-    public static void destroyTree(DetectedTree detectedTree) {
+    public static void destroyTree(DetectedTree detectedTree, ItemStack tool, Entity entity) {
+        Vector random = new Vector(ThreadLocalRandom.current().nextDouble(-0.02, 0.02), 0.00, ThreadLocalRandom.current().nextDouble(-0.02, 0.02));
         detectedTree.logs.forEach(block -> {
             //block.breakNaturally();
-            block.setType(Material.BROWN_STAINED_GLASS);
-            block.getWorld().playSound(block.getLocation(), block.getBlockData().getSoundGroup().getBreakSound(), 1f, 1f);
+            if (UTimber.instance.debug) block.setType(Material.BROWN_STAINED_GLASS);
+            else {
+                spawnFallingBlock(block, random, block.getDrops(tool, entity));
+                block.setType(Material.AIR);
+            }
         });
         detectedTree.leaves.forEach(block -> {
             //block.breakNaturally();
-            block.setType(Material.LIME_STAINED_GLASS);
-            block.getWorld().playSound(block.getLocation(), block.getBlockData().getSoundGroup().getBreakSound(), 1f, 1f);
+            if (UTimber.instance.debug) block.setType(Material.LIME_STAINED_GLASS);
+            else {
+                spawnFallingBlock(block, random, block.getDrops(tool, entity));
+                block.setType(Material.AIR);
+            }
         });
+
         detectedTree.logs.stream().findFirst().ifPresent(block -> {
             block.getWorld().playSound(block.getLocation(), "block.chest.open", 10f, 0.1f);
         });
+
+        Bukkit.getScheduler().runTaskLater(UTimber.instance, () -> {
+            detectedTree.logs.stream().findFirst().ifPresent(block -> {
+                block.getWorld().playSound(block.getLocation(), block.getBlockData().getSoundGroup().getBreakSound(), 1f, 1f);
+            });
+            detectedTree.leaves.stream().findFirst().ifPresent(block -> {
+                block.getWorld().playSound(block.getLocation(), block.getBlockData().getSoundGroup().getBreakSound(), 1f, 1f);
+            });
+
+        }, 20L);
+    }
+
+    public static void spawnFallingBlock(Block block, Vector vector, Collection<ItemStack> drops) {
+        FallingBlock fallingBlock = block.getWorld().spawnFallingBlock(block.getLocation().clone().add(0.5,0,0.5), block.getBlockData());
+        fallingBlock.setHurtEntities(UTimber.instance.getConfig().getBoolean("tree_falling_damage", false));
+        fallingBlock.setDropItem(false);
+        fallingBlock.setGravity(false);
+        fallingBlock.setMetadata("utimber", new FixedMetadataValue(UTimber.instance, drops));
+        Bukkit.getScheduler().runTaskTimer(UTimber.instance, task -> {
+            fallingBlock.setVelocity(vector);
+            if (fallingBlock.getTicksLived() > 20) {
+                fallingBlock.setGravity(true);
+                task.cancel();
+            }
+        }, 1L, 1L);
     }
 
     public static boolean isLog(Block block, Tree tree) {

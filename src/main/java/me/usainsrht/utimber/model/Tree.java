@@ -11,6 +11,7 @@ public class Tree {
     public String name;
     public Set<Material> logs;
     public Set<Material> leaves;
+    public Material sapling;
     public int leafDistanceX;
     public int leafDistanceY;
     public boolean largeLog;
@@ -25,6 +26,7 @@ public class Tree {
         this.name = name;
         logs = config.getStringList("logs").stream().map(Material::matchMaterial).filter(Objects::nonNull).collect(java.util.stream.Collectors.toSet());
         leaves = config.getStringList("leaves").stream().map(Material::matchMaterial).filter(Objects::nonNull).collect(java.util.stream.Collectors.toSet());
+        sapling = Material.matchMaterial(config.getString("sapling", "AIR"));
         leafDistanceX = config.getInt("leaf_distance_x", 2);
         leafDistanceY = config.getInt("leaf_distance_y", 2);
         largeLog = config.getBoolean("large_log", false);

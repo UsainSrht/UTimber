@@ -1,6 +1,9 @@
 
 crouch_disable: true
 
+tree_falling_damage: true
+
+damage_tool_by_log_count: false
 require_tool: true
 tools:
   - WOODEN_AXE
@@ -11,14 +14,25 @@ tools:
   - DIAMOND_AXE
   - NETHERITE_AXE
 
+replant_sapling: true
+replantable_blocks:
+  - dirt
+  - grass_block
+  - podzol
+  - mycelium
+  - coarse_dirt
+  - rooted_dirt
+
 tree:
   oak:
     logs:
       - OAK_LOG
+      - STRIPPED_OAK_LOG
     leaves:
       - OAK_LEAVES
       - flowering_azalea_leaves
       - azalea_leaves
+    sapling: OAK_SAPLING
     log_distance_x: 0
     log_distance_y: 6
     large_log: false
@@ -31,8 +45,10 @@ tree:
   birch:
     logs:
       - BIRCH_LOG
+      - STRIPPED_BIRCH_LOG
     leaves:
       - BIRCH_LEAVES
+    sapling: BIRCH_SAPLING
     log_distance_x: 0
     log_distance_y: 7
     large_log: false
@@ -45,8 +61,10 @@ tree:
   spruce:
     logs:
       - SPRUCE_LOG
+      - STRIPPED_SPRUCE_LOG
     leaves:
       - SPRUCE_LEAVES
+    sapling: SPRUCE_SAPLING
     log_distance_x: 0
     log_distance_y: 8
     large_log: false
@@ -59,8 +77,10 @@ tree:
   acacia:
     logs:
       - ACACIA_LOG
+      - STRIPPED_ACACIA_LOG
     leaves:
       - ACACIA_LEAVES
+    sapling: ACACIA_SAPLING
     log_distance_x: 4
     log_distance_y: 9
     large_log: false
@@ -73,8 +93,10 @@ tree:
   jungle:
     logs:
       - JUNGLE_LOG
+      - STRIPPED_JUNGLE_LOG
     leaves:
       - JUNGLE_LEAVES
+    sapling: JUNGLE_SAPLING
     log_distance_x: 0
     log_distance_y: 10
     large_log: false
@@ -87,8 +109,10 @@ tree:
   dark_oak:
     logs:
       - DARK_OAK_LOG
+      - STRIPPED_DARK_OAK_LOG
     leaves:
       - DARK_OAK_LEAVES
+    sapling: DARK_OAK_SAPLING
     log_distance_x: 2
     log_distance_y: 10
     large_log: true
@@ -101,8 +125,10 @@ tree:
   cherry:
     logs:
       - CHERRY_LOG
+      - STRIPPED_CHERRY_LOG
     leaves:
       - CHERRY_LEAVES
+    sapling: CHERRY_SAPLING
     log_distance_x: 4
     log_distance_y: 10
     large_log: false
@@ -115,8 +141,10 @@ tree:
   pale_oak:
     logs:
       - PALE_OAK_LOG
+      - STRIPPED_PALE_OAK_LOG
     leaves:
       - PALE_OAK_LEAVES
+    sapling: PALE_OAK_SAPLING
     log_distance_x: 0
     log_distance_y: 10
     large_log: false
@@ -129,8 +157,10 @@ tree:
   large_spruce:
     logs:
       - SPRUCE_LOG
+      - STRIPPED_SPRUCE_LOG
     leaves:
       - SPRUCE_LEAVES
+    sapling: SPRUCE_SAPLING
     log_distance_x: 1
     log_distance_y: 30
     large_log: true
@@ -140,3 +170,24 @@ tree:
     min_leaves: 9
     separate_leaves: false
     diagonal_leaves: true
+  large_jungle:
+    logs:
+      - JUNGLE_LOG
+      - STRIPPED_JUNGLE_LOG
+    leaves:
+      - JUNGLE_LEAVES
+    sapling: JUNGLE_SAPLING
+    log_distance_x: 4
+    log_distance_y: 30
+    large_log: true
+    leaf_distance_x: 3
+    leaf_distance_y: 3
+    min_logs: 40
+    min_leaves: 9
+    separate_leaves: false
+    diagonal_leaves: true
+  #red_mushroom:
+  #brown_mushroom:
+  #warped_fungus:
+  #crimson_fungus:
+  #mangrove:

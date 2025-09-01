@@ -1,6 +1,7 @@
 package me.usainsrht.utimber.model;
 
 import me.usainsrht.utimber.TimberUtil;
+import me.usainsrht.utimber.UTimber;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -83,7 +84,7 @@ public class TreeDetector {
                 otherLogsBlockFaces.add(BlockFace.EAST);
                 otherLogsBlockFaces.add(BlockFace.NORTH_EAST);
             } else {
-                Bukkit.broadcastMessage("Large log tree but not a 2x2 log base " + tree.name);
+                if (UTimber.instance.debug) Bukkit.broadcastMessage("Large log tree but not a 2x2 log base " + tree.name);
                 largeLogBaseFace = null;
             }
         }
@@ -157,11 +158,11 @@ public class TreeDetector {
     @Nullable
     public DetectedTree result() {
         if (logs.size() < tree.minLogs) {
-            Bukkit.broadcastMessage("min logs not met: " + logs.size() + " < " + tree.minLogs + " " + tree.name);
+            if (UTimber.instance.debug) Bukkit.broadcastMessage("min logs not met: " + logs.size() + " < " + tree.minLogs + " " + tree.name);
             return null;
         }
         if (leaves.size() < tree.minLeaves) {
-            Bukkit.broadcastMessage("min leaves not met: " + leaves.size() + " < " + tree.minLeaves + " " + tree.name);
+            if (UTimber.instance.debug) Bukkit.broadcastMessage("min leaves not met: " + leaves.size() + " < " + tree.minLeaves + " " + tree.name);
             return null;
         }
         return detectedTree != null ? detectedTree : (detectedTree = new DetectedTree(logs, leaves, tree));

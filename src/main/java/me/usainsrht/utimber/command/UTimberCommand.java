@@ -20,6 +20,11 @@ public class UTimberCommand extends Command {
             sender.sendMessage("utimber reloaded");
             return true;
         }
+        if (args.length == 1 && args[0].equalsIgnoreCase("debug") && sender.hasPermission("utimber.debug")) {
+            UTimber.instance.debug = !UTimber.instance.debug;
+            sender.sendMessage("utimber debug " + (UTimber.instance.debug ? "enabled" : "disabled"));
+            return true;
+        }
         return true;
     }
 
