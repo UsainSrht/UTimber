@@ -16,14 +16,15 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class TimberUtil {
 
     @Nullable
-    public static Tree detectTree(Block baseBlock) {
+    public static List<Tree> detectTree(Block baseBlock) {
 
-        Tree tree = UTimber.instance.trees.stream()
+        List<Tree> trees = UTimber.instance.trees.stream()
                 .filter(t -> t.logs.contains(baseBlock.getType()))
                 .filter(t -> {
                     if (t.largeLog) {
@@ -41,10 +42,15 @@ public class TimberUtil {
                     }
                     return true;
                 })
-                .max(Comparator.comparing(t -> t.largeLog))
-                .orElse(null);
+                .sorted(
+                        Comparator.comparing((Tree t) -> t.largeLog)
+                                .thenComparing((Tree t) -> t.minLogs)
+                                .thenComparing((Tree t) -> t.minLeaves)
+                                .reversed()
+                )
+                .toList();
 
-        return tree;
+        return trees;
     }
 
     public static DetectedTree detectTree(Block baseBlock, Tree tree) {

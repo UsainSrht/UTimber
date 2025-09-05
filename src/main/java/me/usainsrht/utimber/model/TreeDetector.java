@@ -15,20 +15,19 @@ import static me.usainsrht.utimber.TimberUtil.isLog;
 
 public class TreeDetector {
 
-    Set<Block> visited;
-    Set<Block> logs;
-    Set<Block> leaves;
+    Set<Block> visitedLogs = new HashSet<>();
+    Set<Block> visitedLeaves = new HashSet<>();
+    Set<Block> logs = new HashSet<>();
+    Set<Block> leaves = new HashSet<>();
     Tree tree;
     Block baseBlock;
     DetectedTree detectedTree;
     BlockFace largeLogBaseFace;
     Set<BlockFace> otherLogsBlockFaces;
+    //List<Block> debugVisits = new ArrayList<>();
 
     public TreeDetector(Block baseBlock, Tree tree) {
         this.baseBlock = baseBlock;
-        this.visited = new HashSet<>();
-        this.logs = new HashSet<>();
-        this.leaves = new HashSet<>();
         this.tree = tree;
     }
 
@@ -37,20 +36,27 @@ public class TreeDetector {
     }
 
     public Tree.Part visit(Block block, Tree.Part addIf) {
-        if (visited.contains(block)) return null;
-        if (isLog(block, tree)) {
-            if (addIf == Tree.Part.LOG) {
-                visited.add(block);
+        if (addIf == Tree.Part.LOG) {
+            if (visitedLogs.contains(block)) return null;
+            //debugVisits.add(block);
+            visitedLogs.add(block);
+            if (isLog(block, tree)) {
                 logs.add(block);
+                return Tree.Part.LOG;
             }
-            return Tree.Part.LOG;
-        } else if (isLeaf(block, tree)) {
-            if (addIf == Tree.Part.LEAF) {
-                visited.add(block);
+        } else if (addIf == Tree.Part.LEAF) {
+            if (visitedLeaves.contains(block)) return null;
+            //debugVisits.add(block);
+            visitedLeaves.add(block);
+            if (isLeaf(block, tree)) {
                 leaves.add(block);
+                return Tree.Part.LEAF;
             }
-            return Tree.Part.LEAF;
+        } else {
+            if (isLog(block, tree)) return Tree.Part.LOG;
+            if (isLeaf(block, tree)) return Tree.Part.LEAF;
         }
+
         return null;
     }
 
@@ -92,28 +98,54 @@ public class TreeDetector {
     }
 
     public static int[][] branchSearchOffsets = new int[][]{
-            {1,1,1}, {1,1,0}, {1,1,-1},
-            {0,1,1}, {0,1,0}, {0,1,-1},
-            {-1,1,1}, {-1,1,0}, {-1,1,-1},
+            {0,1,0}, /*one block above, put as first element for optimization*/
 
             {1,0,1}, {1,0,0}, {1,0,-1},
             {0,0,1},          {0,0,-1},
             {-1,0,1}, {-1,0,0}, {-1,0,-1},
 
+            {1,1,1}, {1,1,0}, {1,1,-1},
+            {0,1,1},          {0,1,-1},
+            {-1,1,1}, {-1,1,0}, {-1,1,-1},
+
             /*{1,-1,1}, {1,-1,0}, {1,-1,-1},
             {0,-1,1}, {0,-1,0}, {0,-1,-1},
             {-1,-1,1}, {-1,-1,0}, {-1,-1,-1},*/
     };
+    public static int[][] branchSearchOffsetsDown = new int[][]{
+            {0,1,0}, /*one block above, put as first element for optimization*/
+
+            {1,0,1}, {1,0,0}, {1,0,-1},
+            {0,0,1},          {0,0,-1},
+            {-1,0,1}, {-1,0,0}, {-1,0,-1},
+
+            {1,1,1}, {1,1,0}, {1,1,-1},
+            {0,1,1},          {0,1,-1},
+            {-1,1,1}, {-1,1,0}, {-1,1,-1},
+
+            {1,-1,1}, {1,-1,0}, {1,-1,-1},
+            {0,-1,1}, {0,-1,0}, {0,-1,-1},
+            {-1,-1,1}, {-1,-1,0}, {-1,-1,-1}
+    };
+
     public void checkLogs(Block block) {
 
         if (!checkLog(block)) {
             if (block != baseBlock) {
+                visit(block, Tree.Part.LEAF);
                 checkLeaves(block, block);
             }
             return;
         }
 
-        for (int[] offsets : tree.logDistanceX > 0 ? branchSearchOffsets : new int[][]{{0,1,0}}) {
+        int[][] offsetsList;
+        if (tree.logDistanceX > 0) {
+            offsetsList = tree.downwardLogs ? branchSearchOffsetsDown : branchSearchOffsets;
+        } else {
+            offsetsList = tree.downwardLogs ? new int[][]{{0,1,0}, {0,-1,0}} : new int[][]{{0,1,0}};
+        }
+
+        for (int[] offsets : offsetsList) {
             Block relative = block.getRelative(offsets[0], offsets[1], offsets[2]);
             checkLogs(relative);
             if (tree.separateLeaves) {
@@ -134,6 +166,7 @@ public class TreeDetector {
 
     public static int[][] leaveSearchOffsetsDiagonal = new int[][]{
             {1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}, {0, 0, 1}, {0, 0, -1},
+            {1, -1, 0},{-1, -1, 0},{0, -1, 1},{0, -1, -1},
             {1, 1, 1}, {1, 1, -1}, {1, -1, 1}, {1, -1, -1},
             {-1, 1, 1}, {-1, 1, -1}, {-1, -1, 1}, {-1, -1, -1}
     };
@@ -141,6 +174,7 @@ public class TreeDetector {
             {1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}, {0, 0, 1}, {0, 0, -1}
     };
     public void checkLeaves(Block log, Block leaf) {
+        //gets leaves with a clear block gap
         for (int[] offsets : tree.diagonalLeaves ? leaveSearchOffsetsDiagonal : leaveSearchOffsetsCardinal) {
             Block relative = leaf.getRelative(offsets[0], offsets[1], offsets[2]);
             if (TimberUtil.getXDiff(relative, log) > tree.leafDistanceX) {
@@ -165,6 +199,38 @@ public class TreeDetector {
             if (UTimber.instance.debug) Bukkit.broadcastMessage("min leaves not met: " + leaves.size() + " < " + tree.minLeaves + " " + tree.name);
             return null;
         }
+        /*Bukkit.broadcastMessage("total visits: " + debugVisits.size() + " logs " + logs.size() + " leaves " + leaves.size() + " " + tree.name);
+        int i = 0;
+        for (Block b : debugVisits) {
+            Bukkit.getScheduler().runTaskLater(UTimber.instance, () -> {
+                //long amount = IntStream.range(0, debugVisits.size()).filter(index -> Objects.equals(debugVisits.get(index), b)).count();
+                Material[] jetGlass = {
+                        Material.BLUE_STAINED_GLASS,
+                        Material.LIGHT_BLUE_STAINED_GLASS,
+                        Material.CYAN_STAINED_GLASS,
+                        Material.GREEN_STAINED_GLASS,
+                        Material.LIME_STAINED_GLASS,
+                        Material.YELLOW_STAINED_GLASS,
+                        Material.ORANGE_STAINED_GLASS,
+                        Material.RED_STAINED_GLASS,
+                        Material.MAGENTA_STAINED_GLASS,
+                        Material.PURPLE_STAINED_GLASS,
+                        Material.PINK_STAINED_GLASS,
+                        Material.WHITE_STAINED_GLASS,
+                        Material.LIGHT_GRAY_STAINED_GLASS,
+                        Material.GRAY_STAINED_GLASS,
+                        Material.BLACK_STAINED_GLASS,
+                        Material.BROWN_STAINED_GLASS
+                };
+                b.setType(b.getType() == Material.AIR
+                        ? jetGlass[0]
+                        : IntStream.range(0, jetGlass.length)
+                        .filter(index -> jetGlass[index] == b.getType())
+                        .mapToObj(index -> index + 1 < jetGlass.length ? jetGlass[index + 1] : Material.GOLD_BLOCK)
+                        .findFirst()
+                        .orElse(b.getType()));
+            }, (long)(i++ * 0.5));
+        }*/
         return detectedTree != null ? detectedTree : (detectedTree = new DetectedTree(logs, leaves, tree));
     }
 

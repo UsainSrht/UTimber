@@ -17,6 +17,7 @@ public class Tree {
     public boolean largeLog;
     public int logDistanceY;
     public int logDistanceX;
+    public boolean downwardLogs;
     public int minLogs;
     public int minLeaves;
     public boolean separateLeaves;
@@ -32,6 +33,7 @@ public class Tree {
         largeLog = config.getBoolean("large_log", false);
         logDistanceY = config.getInt("log_distance_y", 7);
         logDistanceX = config.getInt("log_distance_x", 4);
+        downwardLogs = config.getBoolean("downward_logs", false);
         minLogs = config.getInt("min_logs", 4);
         minLeaves = config.getInt("min_leaves", 12);
         separateLeaves = config.getBoolean("separate_leaves", false);
