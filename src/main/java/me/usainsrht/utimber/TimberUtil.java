@@ -87,10 +87,10 @@ public class TimberUtil {
 
         Bukkit.getScheduler().runTaskLater(UTimber.instance, () -> {
             detectedTree.logs.stream().findFirst().ifPresent(block -> {
-                block.getWorld().playSound(block.getLocation(), block.getBlockData().getSoundGroup().getBreakSound(), 1f, 1f);
+                block.getWorld().playSound(block.getLocation(), block.getBlockData().getSoundGroup().getBreakSound(), 10f, 1f);
             });
             detectedTree.leaves.stream().findFirst().ifPresent(block -> {
-                block.getWorld().playSound(block.getLocation(), block.getBlockData().getSoundGroup().getBreakSound(), 1f, 1f);
+                block.getWorld().playSound(block.getLocation(), block.getBlockData().getSoundGroup().getBreakSound(), 10f, 1f);
             });
 
         }, 20L);
@@ -99,7 +99,7 @@ public class TimberUtil {
     public static void spawnFallingBlock(Block block, Vector vector, Collection<ItemStack> drops) {
         FallingBlock fallingBlock = block.getWorld().spawnFallingBlock(block.getLocation().clone().add(0.5,0,0.5), block.getBlockData());
         fallingBlock.setHurtEntities(UTimber.instance.getConfig().getBoolean("tree_falling_damage", false));
-        fallingBlock.setDropItem(false);
+        fallingBlock.setDropItem(true); //has to be true to drop items on land
         fallingBlock.setGravity(false);
         fallingBlock.setMetadata("utimber", new FixedMetadataValue(UTimber.instance, drops));
         Bukkit.getScheduler().runTaskTimer(UTimber.instance, task -> {

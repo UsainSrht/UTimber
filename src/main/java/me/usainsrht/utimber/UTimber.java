@@ -3,6 +3,7 @@ package me.usainsrht.utimber;
 import me.usainsrht.utimber.command.CommandHandler;
 import me.usainsrht.utimber.command.UTimberCommand;
 import me.usainsrht.utimber.listener.BreakListener;
+import me.usainsrht.utimber.listener.DamageListener;
 import me.usainsrht.utimber.listener.FallingBlockListener;
 import me.usainsrht.utimber.model.Tree;
 import org.bukkit.configuration.ConfigurationSection;
@@ -28,6 +29,7 @@ public final class UTimber extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new BreakListener(), this);
         getServer().getPluginManager().registerEvents(new FallingBlockListener(), this);
+        getServer().getPluginManager().registerEvents(new DamageListener(), this);
 
         CommandHandler.register(new UTimberCommand("utimber"));
     }

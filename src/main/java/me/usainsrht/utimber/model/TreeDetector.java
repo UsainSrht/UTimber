@@ -231,7 +231,7 @@ public class TreeDetector {
                         .orElse(b.getType()));
             }, (long)(i++ * 0.5));
         }*/
-        return detectedTree != null ? detectedTree : (detectedTree = new DetectedTree(logs, leaves, tree));
+        return detectedTree != null ? detectedTree : (detectedTree = new DetectedTree(logs, leaves, tree, otherLogsBlockFaces));
     }
 
 }

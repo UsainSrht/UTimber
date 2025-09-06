@@ -22,6 +22,12 @@ replantable_blocks:
   - mycelium
   - coarse_dirt
   - rooted_dirt
+  - moss_block
+  - pale_moss_block
+  - netherrack
+  - warped_nylium
+  - crimson_nylium
+  - mud
 
 tree:
   oak:
@@ -30,13 +36,44 @@ tree:
       - STRIPPED_OAK_LOG
     leaves:
       - OAK_LEAVES
-      - flowering_azalea_leaves
-      - azalea_leaves
     sapling: OAK_SAPLING
     log_distance_x: 0
     log_distance_y: 6
     large_log: false
     leaf_distance_x: 2
+    leaf_distance_y: 4
+    min_logs: 4
+    min_leaves: 12
+    separate_leaves: false
+    diagonal_leaves: false
+  fancy_oak:
+    logs:
+      - OAK_LOG
+      - STRIPPED_OAK_LOG
+    leaves:
+      - OAK_LEAVES
+    sapling: OAK_SAPLING
+    log_distance_x: 4
+    log_distance_y: 12
+    large_log: false
+    leaf_distance_x: 4
+    leaf_distance_y: 6
+    min_logs: 9
+    min_leaves: 24
+    separate_leaves: false
+    diagonal_leaves: false
+  azalea:
+    logs:
+      - OAK_LOG
+      - STRIPPED_OAK_LOG
+    leaves:
+      - flowering_azalea_leaves
+      - azalea_leaves
+    sapling: azalea
+    log_distance_x: 4
+    log_distance_y: 6
+    large_log: false
+    leaf_distance_x: 3
     leaf_distance_y: 4
     min_logs: 4
     min_leaves: 12
@@ -50,10 +87,10 @@ tree:
       - BIRCH_LEAVES
     sapling: BIRCH_SAPLING
     log_distance_x: 0
-    log_distance_y: 7
+    log_distance_y: 9
     large_log: false
     leaf_distance_x: 2
-    leaf_distance_y: 2
+    leaf_distance_y: 3
     min_logs: 4
     min_leaves: 12
     separate_leaves: false
@@ -84,7 +121,7 @@ tree:
     log_distance_x: 4
     log_distance_y: 9
     large_log: false
-    leaf_distance_x: 3
+    leaf_distance_x: 4
     leaf_distance_y: 2
     min_logs: 4
     min_leaves: 12
@@ -98,9 +135,9 @@ tree:
       - JUNGLE_LEAVES
     sapling: JUNGLE_SAPLING
     log_distance_x: 0
-    log_distance_y: 10
+    log_distance_y: 11
     large_log: false
-    leaf_distance_x: 3
+    leaf_distance_x: 2
     leaf_distance_y: 3
     min_logs: 4
     min_leaves: 12
@@ -116,9 +153,9 @@ tree:
     log_distance_x: 2
     log_distance_y: 10
     large_log: true
-    leaf_distance_x: 5
+    leaf_distance_x: 6
     leaf_distance_y: 2
-    min_logs: 4
+    min_logs: 24
     min_leaves: 12
     separate_leaves: false
     diagonal_leaves: false
@@ -132,8 +169,8 @@ tree:
     log_distance_x: 4
     log_distance_y: 10
     large_log: false
-    leaf_distance_x: 3
-    leaf_distance_y: 3
+    leaf_distance_x: 7
+    leaf_distance_y: 6
     min_logs: 4
     min_leaves: 12
     separate_leaves: false
@@ -145,12 +182,12 @@ tree:
     leaves:
       - PALE_OAK_LEAVES
     sapling: PALE_OAK_SAPLING
-    log_distance_x: 0
+    log_distance_x: 3
     log_distance_y: 10
-    large_log: false
-    leaf_distance_x: 3
-    leaf_distance_y: 3
-    min_logs: 4
+    large_log: true
+    leaf_distance_x: 5
+    leaf_distance_y: 2
+    min_logs: 24
     min_leaves: 12
     separate_leaves: false
     diagonal_leaves: false
@@ -164,7 +201,7 @@ tree:
     log_distance_x: 1
     log_distance_y: 30
     large_log: true
-    leaf_distance_x: 3
+    leaf_distance_x: 6
     leaf_distance_y: 3
     min_logs: 40
     min_leaves: 9
@@ -177,17 +214,109 @@ tree:
     leaves:
       - JUNGLE_LEAVES
     sapling: JUNGLE_SAPLING
-    log_distance_x: 4
+    log_distance_x: 5
     log_distance_y: 30
     large_log: true
-    leaf_distance_x: 3
+    leaf_distance_x: 9
     leaf_distance_y: 3
     min_logs: 40
     min_leaves: 9
     separate_leaves: false
     diagonal_leaves: true
-  #red_mushroom:
-  #brown_mushroom:
-  #warped_fungus:
-  #crimson_fungus:
-  #mangrove:
+  red_mushroom:
+    logs:
+      - MUSHROOM_STEM
+    leaves:
+      - RED_MUSHROOM_BLOCK
+    sapling: red_mushroom
+    log_distance_x: 0
+    log_distance_y: 10
+    large_log: false
+    leaf_distance_x: 2
+    leaf_distance_y: 5
+    min_logs: 4
+    min_leaves: 12
+    separate_leaves: false
+    diagonal_leaves: true
+  brown_mushroom:
+    logs:
+      - MUSHROOM_STEM
+    leaves:
+      - BROWN_MUSHROOM_BLOCK
+    sapling: brown_mushroom
+    log_distance_x: 0
+    log_distance_y: 10
+    large_log: false
+    leaf_distance_x: 3
+    leaf_distance_y: 0
+    min_logs: 4
+    min_leaves: 12
+    separate_leaves: false
+    diagonal_leaves: false
+  warped_fungus:
+    logs:
+      - warped_stem
+    leaves:
+      - warped_wart_block
+      - shroomlight
+    sapling: warped_fungus
+    log_distance_x: 0
+    log_distance_y: 12
+    large_log: false
+    leaf_distance_x: 3
+    leaf_distance_y: 8
+    min_logs: 4
+    min_leaves: 12
+    separate_leaves: false
+    diagonal_leaves: true
+  crimson_fungus:
+    logs:
+      - crimson_stem
+    leaves:
+      - nether_wart_block
+      - shroomlight
+    sapling: crimson_fungus
+    log_distance_x: 0
+    log_distance_y: 12
+    large_log: false
+    leaf_distance_x: 3
+    leaf_distance_y: 8
+    min_logs: 4
+    min_leaves: 12
+    separate_leaves: false
+    diagonal_leaves: true
+  large_crimson_fungus:
+    logs:
+      - crimson_stem
+    leaves:
+      - nether_wart_block
+      - shroomlight
+    sapling: crimson_fungus
+    log_distance_x: 2
+    log_distance_y: 12
+    large_log: false
+    leaf_distance_x: 4
+    leaf_distance_y: 8
+    min_logs: 24
+    min_leaves: 12
+    separate_leaves: false
+    diagonal_leaves: true
+  mangrove:
+    logs:
+      - mangrove_roots
+      - muddy_mangrove_roots
+      - mangrove_log
+      - stripped_mangrove_log
+    leaves:
+      - mangrove_leaves
+    sapling: mangrove_propagule
+    log_distance_x: 8
+    log_distance_y: 21
+    downward_logs: true
+    large_log: false
+    leaf_distance_x: 8
+    leaf_distance_y: 25
+    min_logs: 12
+    min_leaves: 24
+    separate_leaves: false
+    diagonal_leaves: false
