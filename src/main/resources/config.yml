@@ -103,12 +103,12 @@ tree:
       - SPRUCE_LEAVES
     sapling: SPRUCE_SAPLING
     log_distance_x: 0
-    log_distance_y: 8
+    log_distance_y: 9
     large_log: false
     leaf_distance_x: 3
     leaf_distance_y: 2
     min_logs: 4
-    min_leaves: 12
+    min_leaves: 8
     separate_leaves: true
     diagonal_leaves: false
   acacia:

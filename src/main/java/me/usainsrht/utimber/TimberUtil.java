@@ -13,15 +13,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 public class TimberUtil {
 
-    @Nullable
     public static List<Tree> detectTree(Block baseBlock) {
 
         List<Tree> trees = UTimber.instance.trees.stream()
@@ -48,7 +47,7 @@ public class TimberUtil {
                                 .thenComparing((Tree t) -> t.minLeaves)
                                 .reversed()
                 )
-                .toList();
+                .collect(Collectors.toList());
 
         return trees;
     }

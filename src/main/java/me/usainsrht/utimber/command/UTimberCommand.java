@@ -4,13 +4,13 @@ import me.usainsrht.utimber.UTimber;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-import java.util.List;
+import java.util.Arrays;
 
 public class UTimberCommand extends Command {
 
     public UTimberCommand(String name) {
         super(name);
-        this.setAliases(List.of("timber"));
+        this.setAliases(Arrays.asList("timber"));
     }
 
     @Override

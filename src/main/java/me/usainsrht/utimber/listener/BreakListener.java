@@ -18,6 +18,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 import java.util.Objects;
@@ -61,14 +62,15 @@ public class BreakListener implements Listener {
 
         if (plugin.getConfig().getBoolean("damage_tool_by_log_count", false) && player.getGameMode() != GameMode.CREATIVE) {
             ItemStack tool = player.getInventory().getItemInMainHand();
-            if (tool != null && !tool.getType().isAir() && tool.getItemMeta() instanceof Damageable damageable) {
+            if (tool != null && !tool.getType().isAir() && tool.getItemMeta() instanceof Damageable) {
+                Damageable damageable = (Damageable) tool.getItemMeta();
                 int unbreakingLevel = tool.getEnchantmentLevel(Enchantment.DURABILITY);
                 int durabilityLoss = Math.max(1, detectedTree.logs.size() / (unbreakingLevel+1) );
                 damageable.setDamage(damageable.getDamage() + durabilityLoss);
-                if (damageable.getDamage() >= tool.getType().getMaxDurability() && !damageable.isUnbreakable()) {
+                if (damageable.getDamage() >= tool.getType().getMaxDurability() && !((ItemMeta) damageable).isUnbreakable()) {
                     player.getInventory().setItemInMainHand(null);
                     player.getWorld().playSound(player.getLocation(), "entity.item.break", 1f, 1f);
-                } else tool.setItemMeta(damageable);
+                } else tool.setItemMeta((ItemMeta) damageable);
             }
         }
 

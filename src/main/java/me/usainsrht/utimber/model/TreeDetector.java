@@ -6,7 +6,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
-import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -189,7 +188,6 @@ public class TreeDetector {
         }
     }
 
-    @Nullable
     public DetectedTree result() {
         if (logs.size() < tree.minLogs) {
             if (UTimber.instance.debug) Bukkit.broadcastMessage("min logs not met: " + logs.size() + " < " + tree.minLogs + " " + tree.name);

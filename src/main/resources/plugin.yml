@@ -1,5 +1,5 @@
 name: UTimber
 version: '1.0.0'
 main: me.usainsrht.utimber.UTimber
-api-version: '1.18'
+api-version: '1.13'
 authors: [ UsainSrht ]

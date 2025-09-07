@@ -12,7 +12,7 @@ public class DamageListener implements Listener {
     public void onDamage(EntityDamageByEntityEvent e) {
         if (e.getCause() != EntityDamageEvent.DamageCause.FALLING_BLOCK) return;
 
-        if (!(e.getEntity() instanceof Item item)) return;
+        if (!(e.getEntity() instanceof Item)) return;
 
         if (!e.getDamager().hasMetadata("utimber")) return;
 
