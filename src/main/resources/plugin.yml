@@ -1,5 +1,6 @@
 name: UTimber
-version: '1.0.0'
+version: '${project.version}'
 main: me.usainsrht.utimber.UTimber
 api-version: '1.13'
+folia-supported: true
 authors: [ UsainSrht ]

@@ -4,7 +4,6 @@ import me.usainsrht.utimber.TimberUtil;
 import me.usainsrht.utimber.UTimber;
 import me.usainsrht.utimber.model.DetectedTree;
 import me.usainsrht.utimber.model.Tree;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -80,11 +79,12 @@ public class BreakListener implements Listener {
         if (plugin.getConfig().getBoolean("replant_sapling", true) && detectedTree.tree.sapling != null && !detectedTree.tree.sapling.equals(Material.AIR)) {
             Block below = block.getRelative(BlockFace.DOWN);
             if (plugin.getConfig().getStringList("replantable_blocks").stream().anyMatch(material -> below.getType().toString().equalsIgnoreCase(material))) {
-                Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                    e.getBlock().setType(detectedTree.tree.sapling);
+                Block replantBase = e.getBlock();
+                plugin.scheduling().regionSpecificScheduler(replantBase.getLocation()).runDelayed(() -> {
+                    replantBase.setType(detectedTree.tree.sapling);
                     if (detectedTree.otherLogsBlockFaces != null) {
                         for (BlockFace face : detectedTree.otherLogsBlockFaces) {
-                            Block relative = e.getBlock().getRelative(face);
+                            Block relative = replantBase.getRelative(face);
                             relative.setType(detectedTree.tree.sapling);
                         }
                     }

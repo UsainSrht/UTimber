@@ -3,7 +3,6 @@ package me.usainsrht.utimber;
 import me.usainsrht.utimber.model.DetectedTree;
 import me.usainsrht.utimber.model.Tree;
 import me.usainsrht.utimber.model.TreeDetector;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -84,15 +83,16 @@ public class TimberUtil {
             block.getWorld().playSound(block.getLocation(), "block.chest.open", 10f, 0.1f);
         });
 
-        Bukkit.getScheduler().runTaskLater(UTimber.instance, () -> {
-            detectedTree.logs.stream().findFirst().ifPresent(block -> {
+        detectedTree.logs.stream().findFirst().ifPresent(block -> {
+            UTimber.instance.scheduling().regionSpecificScheduler(block.getLocation()).runDelayed(() -> {
                 block.getWorld().playSound(block.getLocation(), block.getBlockData().getSoundGroup().getBreakSound(), 10f, 1f);
-            });
-            detectedTree.leaves.stream().findFirst().ifPresent(block -> {
+            }, 20L);
+        });
+        detectedTree.leaves.stream().findFirst().ifPresent(block -> {
+            UTimber.instance.scheduling().regionSpecificScheduler(block.getLocation()).runDelayed(() -> {
                 block.getWorld().playSound(block.getLocation(), block.getBlockData().getSoundGroup().getBreakSound(), 10f, 1f);
-            });
-
-        }, 20L);
+            }, 20L);
+        });
     }
 
     public static void spawnFallingBlock(Block block, Vector vector, Collection<ItemStack> drops) {
@@ -101,12 +101,13 @@ public class TimberUtil {
         fallingBlock.setDropItem(true); //has to be true to drop items on land
         fallingBlock.setGravity(false);
         fallingBlock.setMetadata("utimber", new FixedMetadataValue(UTimber.instance, drops));
-        Bukkit.getScheduler().runTaskTimer(UTimber.instance, task -> {
+        UTimber.instance.scheduling().entitySpecificScheduler(fallingBlock).runAtFixedRate(task -> {
             fallingBlock.setVelocity(vector);
             if (fallingBlock.getTicksLived() > 20) {
                 fallingBlock.setGravity(true);
                 task.cancel();
             }
+        }, () -> {
         }, 1L, 1L);
     }
 

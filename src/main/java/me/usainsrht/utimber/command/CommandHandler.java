@@ -1,23 +1,13 @@
 package me.usainsrht.utimber.command;
 
-import org.bukkit.Bukkit;
+import me.usainsrht.utimber.UTimber;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 
-import java.lang.reflect.Field;
-
 public class CommandHandler {
 
-    public static void register(Command... cmds) {
-        CommandMap commandMap = null;
-        try {
-            Field commandMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");
-            commandMapField.setAccessible(true);
-            commandMap = (CommandMap) commandMapField.get(Bukkit.getServer());
-
-        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
+    public static void register(UTimber plugin, Command... cmds) {
+        CommandMap commandMap = plugin.morePaperLib().commandRegistration().getServerCommandMap();
         for (Command cmd : cmds) {
             commandMap.register(cmd.getName(), cmd);
         }
