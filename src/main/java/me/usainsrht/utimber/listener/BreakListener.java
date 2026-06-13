@@ -33,13 +33,17 @@ public class BreakListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBreak(BlockBreakEvent e) {
 
+        if (e.isCancelled())
+            return;
+
         Player player = e.getPlayer();
 
         if (plugin.getConfig().getBoolean("crouch_disable", true) && player.isSneaking()) {
             return;
         }
 
-        if (plugin.getConfig().getBoolean("require_tool", false) && !TimberUtil.isTimberTool(player.getInventory().getItemInMainHand().getType())) {
+        if (plugin.getConfig().getBoolean("require_tool", false)
+                && !TimberUtil.isTimberTool(player.getInventory().getItemInMainHand().getType())) {
             return;
         }
 
@@ -48,37 +52,47 @@ public class BreakListener implements Listener {
         long start = System.currentTimeMillis();
 
         List<Tree> trees = TimberUtil.detectTree(block);
-        if (trees == null ||trees.isEmpty()) return;
+        if (trees == null || trees.isEmpty())
+            return;
 
         DetectedTree detectedTree = trees.stream()
                 .map(tree -> TimberUtil.detectTree(block, tree))
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElse(null);
-        if (detectedTree == null) return;
+        if (detectedTree == null)
+            return;
 
         TimberUtil.destroyTree(detectedTree, player.getInventory().getItemInMainHand(), player);
 
-        if (plugin.getConfig().getBoolean("damage_tool_by_log_count", false) && player.getGameMode() != GameMode.CREATIVE) {
+        if (player.getGameMode() != GameMode.CREATIVE) {
             ItemStack tool = player.getInventory().getItemInMainHand();
             if (tool != null && !tool.getType().isAir() && tool.getItemMeta() instanceof Damageable) {
                 Damageable damageable = (Damageable) tool.getItemMeta();
                 int unbreakingLevel = tool.getEnchantmentLevel(Enchantment.DURABILITY);
-                int durabilityLoss = Math.max(1, detectedTree.logs.size() / (unbreakingLevel+1) );
+                int durabilityLoss = plugin.getConfig().getBoolean("damage_tool_by_log_count", false)
+                        ? Math.max(1, detectedTree.logs.size() / (unbreakingLevel + 1))
+                        : 1;
                 damageable.setDamage(damageable.getDamage() + durabilityLoss);
-                if (damageable.getDamage() >= tool.getType().getMaxDurability() && !((ItemMeta) damageable).isUnbreakable()) {
+                if (damageable.getDamage() >= tool.getType().getMaxDurability()
+                        && !((ItemMeta) damageable).isUnbreakable()) {
                     player.getInventory().setItemInMainHand(null);
                     player.getWorld().playSound(player.getLocation(), "entity.item.break", 1f, 1f);
-                } else tool.setItemMeta((ItemMeta) damageable);
+                } else
+                    tool.setItemMeta((ItemMeta) damageable);
             }
         }
 
-        if (plugin.debug) player.sendMessage(detectedTree.tree.name + " logs: " + detectedTree.logs.size() + ", leaves: " + detectedTree.leaves.size() + " (" + (System.currentTimeMillis() - start) + "ms)");
+        if (plugin.debug)
+            player.sendMessage(detectedTree.tree.name + " logs: " + detectedTree.logs.size() + ", leaves: "
+                    + detectedTree.leaves.size() + " (" + (System.currentTimeMillis() - start) + "ms)");
 
-        //check replant setting and block if applicable
-        if (plugin.getConfig().getBoolean("replant_sapling", true) && detectedTree.tree.sapling != null && !detectedTree.tree.sapling.equals(Material.AIR)) {
+        // check replant setting and block if applicable
+        if (plugin.getConfig().getBoolean("replant_sapling", true) && detectedTree.tree.sapling != null
+                && !detectedTree.tree.sapling.equals(Material.AIR)) {
             Block below = block.getRelative(BlockFace.DOWN);
-            if (plugin.getConfig().getStringList("replantable_blocks").stream().anyMatch(material -> below.getType().toString().equalsIgnoreCase(material))) {
+            if (plugin.getConfig().getStringList("replantable_blocks").stream()
+                    .anyMatch(material -> below.getType().toString().equalsIgnoreCase(material))) {
                 Block replantBase = e.getBlock();
                 plugin.scheduling().regionSpecificScheduler(replantBase.getLocation()).runDelayed(() -> {
                     replantBase.setType(detectedTree.tree.sapling);
@@ -92,7 +106,6 @@ public class BreakListener implements Listener {
 
             }
         }
-
 
     }
 
