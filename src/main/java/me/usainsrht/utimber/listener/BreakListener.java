@@ -2,6 +2,7 @@ package me.usainsrht.utimber.listener;
 
 import me.usainsrht.utimber.TimberUtil;
 import me.usainsrht.utimber.UTimber;
+import me.usainsrht.utimber.event.TreeDestroyEvent;
 import me.usainsrht.utimber.model.DetectedTree;
 import me.usainsrht.utimber.model.Tree;
 import org.bukkit.GameMode;
@@ -63,10 +64,16 @@ public class BreakListener implements Listener {
         if (detectedTree == null)
             return;
 
-        TimberUtil.destroyTree(detectedTree, player.getInventory().getItemInMainHand(), player);
+        TreeDestroyEvent treeDestroyEvent = new TreeDestroyEvent(player, detectedTree, player.getInventory().getItemInMainHand());
+        plugin.getServer().getPluginManager().callEvent(treeDestroyEvent);
+        if (treeDestroyEvent.isCancelled()) {
+            return;
+        }
+
+        TimberUtil.destroyTree(detectedTree, treeDestroyEvent.getTool(), player);
 
         if (player.getGameMode() != GameMode.CREATIVE) {
-            ItemStack tool = player.getInventory().getItemInMainHand();
+            ItemStack tool = treeDestroyEvent.getTool();
             if (tool != null && !tool.getType().isAir() && tool.getItemMeta() instanceof Damageable) {
                 Damageable damageable = (Damageable) tool.getItemMeta();
                 int unbreakingLevel = tool.getEnchantmentLevel(Enchantment.DURABILITY);
