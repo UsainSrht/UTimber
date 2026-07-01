@@ -39,6 +39,10 @@ public class BreakListener implements Listener {
 
         Player player = e.getPlayer();
 
+        if (!plugin.isTimberEnabled(player)) {
+            return;
+        }
+
         if (plugin.getConfig().getBoolean("crouch_disable", true) && player.isSneaking()) {
             return;
         }

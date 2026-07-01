@@ -1,6 +1,9 @@
 
 crouch_disable: true
 
+# Players listed here have timber disabled.
+timber_disabled: []
+
 tree_falling_damage: true
 
 damage_tool_by_log_count: false

@@ -76,5 +76,34 @@ public final class UTimber extends JavaPlugin {
         return morePaperLib.scheduling();
     }
 
+    /**
+     * @return whether timber is enabled for the player.
+     */
+    public boolean isTimberEnabled(org.bukkit.entity.Player player) {
+        return !getConfig().getStringList("timber_disabled").contains(player.getUniqueId().toString());
+    }
+
+    /**
+     * Enables or disables timber for the given player.
+     */
+    public void setTimberEnabled(org.bukkit.entity.Player player, boolean enabled) {
+        String uuid = player.getUniqueId().toString();
+        java.util.List<String> disabledList = getConfig().getStringList("timber_disabled");
+
+        if (enabled) {
+            if (disabledList.remove(uuid)) {
+                getConfig().set("timber_disabled", disabledList);
+                saveConfig();
+            }
+            return;
+        }
+
+        if (!disabledList.contains(uuid)) {
+            disabledList.add(uuid);
+            getConfig().set("timber_disabled", disabledList);
+            saveConfig();
+        }
+    }
+
 
 }
